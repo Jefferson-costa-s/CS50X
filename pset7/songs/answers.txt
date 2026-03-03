@@ -1,0 +1,15 @@
+1. If songs.db contains the top 100 songs of one listener from 2018, how would you characterize their audio aura?
+
+AVERAGE VALUES:
+- ENERGY: 0.66
+- VALENCE: 0.48
+- DANCEABILITY: 0.72
+
+Answer:
+The listener's aura is energetic and rhythmic, but with a low valence, means that they enjoy danceable music with a serious and melancholic tone.
+
+2. Hypothesize about why the way you’ve calculated this aura might not be very representative of the listener. What better ways of calculating this aura would you propose?
+
+Answer:
+
+A single average is not representative because it hides distinct moods (e.g. happy vs. sad). A better method would be to analyze clusters of songs to identify multiple, separate auras.

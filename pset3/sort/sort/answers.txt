@@ -1,0 +1,10 @@
+sort1 uses: Bubble sort
+How do you know?: it repeatedly compares adjacent elements and swaps them if needed, which makes it extremely slow when the list is reversed and fast when the list is already sorted.
+
+
+sort2 uses: Merge sort
+How do you know?: it divides the whole list and combines the results, resulting in a very fast sort in any scenario.
+
+sort3 uses: Selection sort
+How do you know?: it runs through the whole list searching for the smallest element, even if the list is already sorted, which results in the same time complexity in all cases.
+

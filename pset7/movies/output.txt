@@ -1,0 +1,12 @@
++----------------------------+
+|           title            |
++----------------------------+
+| Silver Linings Playbook    |
+| Serena                     |
+| X-Men: First Class         |
+| American Hustle            |
+| X-Men: Days of Future Past |
+| Joy                        |
+| X-Men: Apocalypse          |
+| X-Men: Dark Phoenix        |
++----------------------------+
