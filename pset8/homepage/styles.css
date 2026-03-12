@@ -1,0 +1,18 @@
+/* Dark mode*/
+[data-bs-theme="dark"] {
+    --bs-body-bg: #121212;
+    --bs-body-color: #e0e0e0;
+    --bs-list-group-bg: #1e1e1e;
+}
+
+/* Card dark*/
+[data-bs-theme="dark"] .card {
+    background-color: #1e1e1e;
+    border: none;
+}
+
+/* Hover email */
+a.text-secondary:hover {
+    color: #f8f9fa !important;
+    transition: 0.3s;
+}

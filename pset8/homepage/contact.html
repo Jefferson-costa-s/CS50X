@@ -1,8 +1,14 @@
 <!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
 
-<html lang="en">
 
 <head>
+    <script>
+        (function () {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', saved);
+        })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -10,7 +16,7 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="styles.css" rel="stylesheet">
 
-    <title>Jefferson Costa | Contact </title>
+    <title>Contact Me</title>
 </head>
 
 <body>
@@ -21,23 +27,102 @@
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+                <!-- UM único navbar-nav com os links -->
                 <div class="navbar-nav">
                     <a class="nav-link" href="index.html">Home</a>
                     <a class="nav-link" href="about.html">About</a>
                     <a class="nav-link" href="projects.html">Projects</a>
                     <a class="nav-link" href="contact.html">Contact</a>
                 </div>
+
+                <!-- Botão FORA do navbar-nav, ms-auto empurra para direita -->
+                <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-auto" onclick="toggleTheme()">
+                </button>
+
             </div>
         </div>
     </nav>
+
     <div class="container mt-5">
-        <h1>Hello, contact!</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+
+                        <h2 class="text-center mb-2">Contact Me</h2>
+                        <p class="text-center text-muted small mb-5">Open for professional opportunities and
+                            collaboration</p>
+
+                        <div class="d-flex flex-column gap-4">
+
+                            <div class="d-flex align-items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-envelope-fill text-light" viewBox="0 0 16 16">
+                                    <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 
+                 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 
+                 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586 
+                 L16 11.801V4.697l-5.803 3.546Z" />
+                                </svg>
+                                <a href="mailto:jeffersoncosta.s@hotmail.com"
+                                    class="text-decoration-none text-body fs-5">
+                                    jeffersoncosta.s@hotmail.com
+                                </a>
+                            </div>
+
+
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+                                    width="30" class="bg-light rounded-circle" alt="GitHub">
+
+                                <a href="https://github.com/Jefferson-costa-s" target="_blank"
+                                    class="text-decoration-none text-body fs-5">
+                                    github.com/Jefferson-costa-s
+                                </a>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg"
+                                    width="30" alt="LinkedIn">
+                                <a href="https://www.linkedin.com/in/jeffersoncosta-dev/" target="_blank"
+                                    class="text-decoration-none text-body fs-5">
+                                    linkedin.com/in/jeffersoncosta-dev/
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', saved);
+            updateButton(saved);
+        })();
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-bs-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-bs-theme', next);
+            localStorage.setItem('theme', next);
+            updateButton(next);
+        }
+
+        function updateButton(theme) {
+            const btn = document.getElementById('theme-toggle');
+            if (!btn) return;
+            btn.textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+        }
+    </script>
 
 </body>
 
