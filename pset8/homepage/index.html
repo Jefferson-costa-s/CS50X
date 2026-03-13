@@ -31,16 +31,12 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-
-                <!-- UM único navbar-nav com os links -->
                 <div class="navbar-nav">
                     <a class="nav-link" href="index.html">Home</a>
                     <a class="nav-link" href="about.html">About</a>
                     <a class="nav-link" href="projects.html">Projects</a>
                     <a class="nav-link" href="contact.html">Contact</a>
                 </div>
-
-                <!-- Botão FORA do navbar-nav, ms-auto empurra para direita -->
                 <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-auto" onclick="toggleTheme()">
                 </button>
 
@@ -67,31 +63,32 @@
 
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-            </script>
-
-        <script>
-            (function () {
-                const saved = localStorage.getItem('theme') || 'dark';
-                document.documentElement.setAttribute('data-bs-theme', saved);
-                updateButton(saved);
-            })();
-
-            function toggleTheme() {
-                const current = document.documentElement.getAttribute('data-bs-theme');
-                const next = current === 'dark' ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-bs-theme', next);
-                localStorage.setItem('theme', next);
-                updateButton(next);
-            }
-
-            function updateButton(theme) {
-                const btn = document.getElementById('theme-toggle');
-                if (!btn) return;
-                btn.textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
-            }
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
         </script>
+
+    <script>
+        (function () {
+            const saved = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-bs-theme', saved);
+            updateButton(saved);
+        })();
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-bs-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-bs-theme', next);
+            localStorage.setItem('theme', next);
+            updateButton(next);
+        }
+
+        function updateButton(theme) {
+            const btn = document.getElementById('theme-toggle');
+            if (!btn) return;
+            btn.textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+        }
+    </script>
 
 </body>
 

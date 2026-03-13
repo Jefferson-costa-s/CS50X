@@ -1,18 +1,25 @@
-/* Dark mode*/
 [data-bs-theme="dark"] {
     --bs-body-bg: #121212;
     --bs-body-color: #e0e0e0;
     --bs-list-group-bg: #1e1e1e;
 }
 
-/* Card dark*/
 [data-bs-theme="dark"] .card {
     background-color: #1e1e1e;
     border: none;
 }
 
-/* Hover email */
 a.text-secondary:hover {
     color: #f8f9fa !important;
     transition: 0.3s;
+}
+
+h2 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.2rem;
 }

@@ -1,0 +1,15 @@
+HTML Tags used:
+nav, div, a, button, span, p, ul, li, img, h2, h5, strong, em, hr, svg, meta, script, link
+
+CSS Properties:
+1. [data-bs-theme="dark"]               — sets --bs-body-bg, --bs-body-color, --bs-list-group-bg
+2. [data-bs-theme="dark"] .card         — sets background-color, border
+3. a.text-secondary:hover               — sets color, transition
+4. h2                                   — sets font-weight, letter-spacing
+5. .navbar-brand                        — sets font-weight, font-size
+
+JavaScript:
+Used localStorage and data-bs-theme attribute toggling to implement a persistent dark/light mode switch across all pages.
+
+Bootstrap:
+Used navbar, card, badge, grid system (col-md-*), and utility classes (d-flex, ms-auto, shadow-sm, rounded-circle) for layout and styling.
