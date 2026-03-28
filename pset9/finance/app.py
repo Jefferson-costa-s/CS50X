@@ -42,8 +42,37 @@ def index():
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+        symbol = request.form.get("symbol")
+        shares = request.form.get("shares")
+        if not symbol:
+            return apology("must provide symbol", 400)
+        if not shares:
+            return apology("must provide a number of shares", 400)
 
+        try:
+            shares = int(shares)
+        except ValueError:
+            return apology("must provide a valid number of shares", 400)
+
+
+
+        if shares <= 0:
+            return apology("must provide a positive number of shares", 400)
+        quote = lookup(symbol)
+
+        if not quote:
+            return apology("invalid symbol", 400)
+        
+        price = quote["price"] * shares
+
+        user_balance = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
+        if user_balance[0]["cash"] < price:
+            return apology("insufficient funds", 400)
+        db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)", session["user_id"], symbol, shares, price)
+        db.execute("UPDATE users SET cash = cash - ? WHERE id = ?", price, session["user_id"])
+        return redirect("/")
+    return render_template("buy.html")
 
 @app.route("/history")
 @login_required
@@ -106,9 +135,16 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
+    if request.method == "POST":
+        symbol = request.form.get("symbol")
+        if not symbol:
+            return apology("must provide symbol", 403)
+        quote = lookup(symbol)
+        if not quote:
+            return apology("invalid symbol", 400)
+        return render_template("quote.html", quote=quote)
 
-    return apology("TODO")
-
+    return redirect("/")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():

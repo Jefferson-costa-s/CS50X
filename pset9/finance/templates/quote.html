@@ -1,7 +1,4 @@
-<!-- - [ ]  Criar `quote.html` (POST) para receber `symbol`
-- [ ]  Controller: chamar `lookup(symbol)`
-- [ ]  Controller: validar retorno (não pode ser `None`)
-- [ ]  Criar `quoted.html` para exibir Nome, Símbolo e Preço (filtro `usd`) -->
+
 
 {% extends "layout.html" %}
 
@@ -10,11 +7,19 @@ Quote
 {% endblock %}
 
 {% block main %}
-    <h1>Quote</h1>
-    <form action="/quote" method="post">
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="symbol" placeholder="Symbol" type="text">
-        </div>
-        <button class="btn btn-primary" type="submit">Get Quote</button>
-    </form>
+<h1>Quote</h1>
+<form action="/quote" method="post">
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="symbol" placeholder="Symbol"
+            type="text">
+    </div>
+    <div>
+        {% if quote %}
+        <p>Name: {{ quote.name }}</p>
+        <p>Symbol: {{ quote.symbol }}</p>
+        <p>Price: {{ quote.price | usd }}</p>
+        {% endif %}
+    </div>
+    <button class="btn btn-primary" type="submit">Get Quote</button>
+</form>
 {% endblock %}
