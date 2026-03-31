@@ -35,7 +35,23 @@ def after_request(response):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return apology("TODO")
+    grand_total = 0
+    total_stocks_value = 0
+    stocks = db.execute(
+        "SELECT symbol, SUM(shares) AS shares FROM transactions WHERE user_id=? GROUP BY symbol HAVING SUM(shares) > 0", session["user_id"])
+    user_cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
+    cash = user_cash[0]["cash"]
+    for stock in stocks:
+        quote = lookup(stock["symbol"])
+        current_price = quote["price"]
+        stock["price"] = current_price
+
+        total_position = current_price * stock["shares"]
+        stock["total"] = total_position
+        total_stocks_value += total_position
+    grand_total += cash + total_stocks_value
+
+    return render_template("index.html", stocks=stocks, cash=cash, grand_total=grand_total)
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -55,30 +71,31 @@ def buy():
         except ValueError:
             return apology("must provide a valid number of shares", 400)
 
-
-
         if shares <= 0:
             return apology("must provide a positive number of shares", 400)
         quote = lookup(symbol)
 
         if not quote:
             return apology("invalid symbol", 400)
-        
+
         price = quote["price"] * shares
 
         user_balance = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
         if user_balance[0]["cash"] < price:
             return apology("insufficient funds", 400)
-        db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)", session["user_id"], symbol, shares, price)
+        db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)",
+                   session["user_id"], symbol, shares, price)
         db.execute("UPDATE users SET cash = cash - ? WHERE id = ?", price, session["user_id"])
         return redirect("/")
     return render_template("buy.html")
+
 
 @app.route("/history")
 @login_required
 def history():
     """Show history of transactions"""
-    return apology("TODO")
+    history_db = db.execute("SELECT * FROM transactions WHERE user_id = ?", session["user_id"])
+    return render_template("history.html", history_db=history_db)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -138,13 +155,14 @@ def quote():
     if request.method == "POST":
         symbol = request.form.get("symbol")
         if not symbol:
-            return apology("must provide symbol", 403)
+            return apology("must provide symbol", 400)
         quote = lookup(symbol)
         if not quote:
             return apology("invalid symbol", 400)
         return render_template("quote.html", quote=quote)
 
-    return redirect("/")
+    return render_template("quote.html")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -152,16 +170,16 @@ def register():
     if request.method == "POST":
         username = request.form.get("username")
         plain_password = request.form.get("password")
-        password_confirmation = request.form.get("password_confirmation")
+        confirmation = request.form.get("confirmation")
 
         if not username:
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
         if not plain_password:
-            return apology("must provide password", 403)
-        if not password_confirmation:
-            return apology("must provide password confirmation", 403)
-        if plain_password != password_confirmation:
-            return apology("passwords do not match", 403)
+            return apology("must provide password", 400)
+        if not confirmation:
+            return apology("must provide password confirmation", 400)
+        if plain_password != confirmation:
+            return apology("passwords do not match", 400)
 
         hash_password = generate_password_hash(plain_password)
 
@@ -169,13 +187,44 @@ def register():
             db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", username, hash_password)
             return redirect("/login")
         except ValueError:
-            return apology("username already exists", 403)
+            return apology("username already exists", 400)
 
     return render_template("register.html")
+
 
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
-
+    stocks = db.execute(
+        "SELECT symbol, SUM(shares) AS shares FROM transactions WHERE user_id=? GROUP BY symbol HAVING SUM(shares) > 0", session["user_id"])
+    if request.method == "POST":
+        symbol = request.form.get("symbol")
+        shares = request.form.get("shares")
+        if not symbol:
+            return apology("Missing symbol")
+        if not shares:
+            return apology("Missing shares")
+        try:
+            shares = int(shares)
+        except ValueError:
+            return apology("Invalid number of shares")
+        if shares <= 0:
+            return apology("Invalid number of shares")
+        for stock in stocks:
+            if stock["symbol"] == symbol:
+                break
+        else:
+            return apology("Invalid symbol")
+        if shares > stock["shares"]:
+            return apology("Not enough shares")
+        quote = lookup(symbol)
+        if not quote:
+            return apology("Invalid symbol")
+        price = quote["price"]
+        total_sale = price * shares
+        db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)",
+                   session["user_id"], symbol, -shares, price)
+        db.execute("UPDATE users SET cash = cash + ? WHERE id = ?", total_sale, session["user_id"])
+        return redirect("/")
+    return render_template("sell.html", stocks=stocks)
