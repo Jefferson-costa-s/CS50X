@@ -1,7 +1,8 @@
 import os
-
+import io
+import csv
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, Response
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -78,14 +79,16 @@ def buy():
         if not quote:
             return apology("invalid symbol", 400)
 
-        price = quote["price"] * shares
+        price = quote["price"]
+        symbol = quote["symbol"]
+        order_total = price * shares
 
         user_balance = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
-        if user_balance[0]["cash"] < price:
+        if user_balance[0]["cash"] < order_total:
             return apology("insufficient funds", 400)
         db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)",
                    session["user_id"], symbol, shares, price)
-        db.execute("UPDATE users SET cash = cash - ? WHERE id = ?", price, session["user_id"])
+        db.execute("UPDATE users SET cash = cash - ? WHERE id = ?", order_total, session["user_id"])
         return redirect("/")
     return render_template("buy.html")
 
@@ -196,8 +199,6 @@ def register():
 @login_required
 def sell():
     """Sell shares of stock"""
-    stocks = db.execute(
-        "SELECT symbol, SUM(shares) AS shares FROM transactions WHERE user_id=? GROUP BY symbol HAVING SUM(shares) > 0", session["user_id"])
     if request.method == "POST":
         symbol = request.form.get("symbol")
         shares = request.form.get("shares")
@@ -211,20 +212,39 @@ def sell():
             return apology("Invalid number of shares")
         if shares <= 0:
             return apology("Invalid number of shares")
-        for stock in stocks:
-            if stock["symbol"] == symbol:
-                break
-        else:
-            return apology("Invalid symbol")
-        if shares > stock["shares"]:
+        stock_db = db.execute(
+            "SELECT SUM(shares) AS shares FROM transactions WHERE user_id = ? AND symbol = ? GROUP BY symbol", session["user_id"], symbol)
+        if not stock_db or shares > stock_db[0]["shares"]:
             return apology("Not enough shares")
         quote = lookup(symbol)
         if not quote:
             return apology("Invalid symbol")
-        price = quote["price"]
+        price = quote["price"] 
         total_sale = price * shares
         db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)",
                    session["user_id"], symbol, -shares, price)
         db.execute("UPDATE users SET cash = cash + ? WHERE id = ?", total_sale, session["user_id"])
         return redirect("/")
+    stocks = db.execute(
+        "SELECT symbol, SUM(shares) AS shares FROM transactions WHERE user_id=? GROUP BY symbol HAVING SUM(shares) > 0", session["user_id"])
     return render_template("sell.html", stocks=stocks)
+
+@app.route("/export")
+@login_required
+def export():
+    """export transactions to csv"""
+    transactions = db.execute("SELECT * FROM transactions WHERE user_id = ?", session["user_id"])
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+
+    writer.writerow(["Symbol", "Shares", "Price", "timestamp"])
+    for transaction in transactions:
+        writer.writerow([transaction["symbol"], transaction["shares"], transaction["price"], transaction["timestamp"]])
+
+    csv_data = buffer.getvalue()
+    response = Response(csv_data, mimetype="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=transactions.csv"
+    return response
+        
+
+

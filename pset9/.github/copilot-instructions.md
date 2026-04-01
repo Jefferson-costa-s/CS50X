@@ -1,0 +1,3 @@
+- Aplique Padrão de Projeto Early Return (Fail-Fast) em validações.
+- Utilize Type Hints estritos em todas as assinaturas de funções.
+- Mantenha funções atômicas (Single Responsibility Principle).
